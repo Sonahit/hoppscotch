@@ -1,6 +1,7 @@
 import * as cookie from "cookie"
 import * as URL from "url"
 import * as querystring from "querystring"
+import parser from "yargs-parser"
 
 /**
  * given this: [ 'msg1=value1', 'msg2=value2' ]
@@ -20,10 +21,11 @@ const joinDataArguments = (dataArguments) => {
 }
 
 const parseCurlCommand = (curlCommand) => {
-  let newlineFound = /\r|\n/.exec(curlCommand)
+  let newlineFound = /\\/gi.test(curlCommand)
   if (newlineFound) {
-    // remove newlines
-    curlCommand = curlCommand.replace(/\r|\n/g, "")
+    // remove '\' and newlines
+    curlCommand = curlCommand.replace(/\\/gi, "")
+    curlCommand = curlCommand.replace(/\n/g, "")
   }
   // yargs parses -XPOST as separate arguments. just prescreen for it.
   curlCommand = curlCommand.replace(/ -XPOST/, " -X POST")
@@ -32,7 +34,7 @@ const parseCurlCommand = (curlCommand) => {
   curlCommand = curlCommand.replace(/ -XPATCH/, " -X PATCH")
   curlCommand = curlCommand.replace(/ -XDELETE/, " -X DELETE")
   curlCommand = curlCommand.trim()
-  let parsedArguments = require("yargs-parser")(curlCommand)
+  let parsedArguments = parser(curlCommand)
   let cookieString
   let cookies
   let url = parsedArguments._[1]
