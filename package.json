@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "predev": "node build.js --dev",
-    "dev": "nuxt",
+    "dev": "nuxt -p 4000",
     "prebuild": "node build.js",
     "build": "nuxt build",
     "start": "nuxt start",

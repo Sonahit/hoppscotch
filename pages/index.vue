@@ -1356,6 +1356,7 @@ export default {
         "PATCH",
         "CUSTOM",
       ],
+      env: {},
     }
   },
   watch: {
@@ -1899,13 +1900,12 @@ export default {
   },
   methods: {
     useSelectedEnvironment(environment) {
-      let preRequestScriptString = ""
+      const env = {}
       for (let variable of environment.variables) {
-        preRequestScriptString =
-          preRequestScriptString + `pw.env.set('${variable.key}', '${variable.value}');\n`
+        env[variable.key] = variable.value
       }
-      this.preRequestScript = preRequestScriptString
-      this.showPreRequestScript = true
+      this.env = env
+      return ""
     },
     checkCollections() {
       const checkCollectionAvailability =
@@ -1957,8 +1957,8 @@ export default {
         credentials: true,
       }
 
+      let environmentVariables = this.env
       if (preRequestScript || hasPathParams(this.params)) {
-        let environmentVariables = getEnvironmentVariablesFromScript(preRequestScript)
         environmentVariables = addPathParamsToVariables(this.params, environmentVariables)
         requestOptions.url = parseTemplateString(requestOptions.url, environmentVariables)
         requestOptions.data = parseTemplateString(requestOptions.data, environmentVariables)
